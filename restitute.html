@@ -3,12 +3,22 @@
 </head>
 
 <body>
-	<h1>Welcome to Meteor!</h1>
+	<!-- {{> infinity}} -->
 
-	{{> hello}}
+	<ul>
+		{{> anal}}
+	</ul>
+
+	{{#if moreResults}}
+		<div id="showMoreResults" style="margin-left: 35px;">
+			<span class="loading">Loading...</span>
+		</div>
+	{{/if}}
 </body>
 
-<template name="hello">
-	<button>Click Me</button>
-	<p>You've pressed the button {{counter}} times.</p>
+
+<template name="anal">
+	{{#each slaves}}
+		<li>{{name}}</li>
+	{{/each}}
 </template>
