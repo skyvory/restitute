@@ -87,7 +87,7 @@ if (Meteor.isClient) {
 		var threshold, target = $("body");
 		if(!target.length) return;
 
-		// threshold = $(window).scrollTop() + $(window).height() - target.height();
+		threshold = $(window).scrollTop() + $(window).height() - target.height();
 
 		// target.height() calculate the height of overall document body
 		// window height() calculate the height of browser client area (document), substracted to remove the gap from top edge scrollbar to bottom of document body height
@@ -96,8 +96,10 @@ if (Meteor.isClient) {
 		console.log("DIST:"+distance+
 			" BODY:"+  target.height() +
 			" SCROLLTOP:"+$(window).scrollTop() +
-			" WINDOW:"+ $(window).height());
-		if($(window).scrollTop() > distance) {
+			" WINDOW:"+ $(window).height()+
+			" OFFSET:"+ target.offset().top);
+		if(target.offset().top < threshold) {
+			console.log("TRIGGER LOAD");
 			Session.set("slaves_limit", Session.get("slaves_limit") + slaves_expansion);
 		}
 		else {
