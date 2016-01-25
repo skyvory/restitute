@@ -13,7 +13,7 @@ if(Meteor.isServer) {
 
 	stock_schema = new SimpleSchema({
 		name: {type: String},
-		virgin: {type: Boolean, defaultValue: true},
+		virgin: {type: Number, defaultValue: 1},
 		seed: {type: String, optional: true},
 		fertility: {type: String, optional: true, defaultValue: "unknown", allowedValues: ["unknown", "none", "low", "medium", "high"]},
 		status: {type: String, defaultValue: "queue", allowedValues: ["queue", "target", "abort"]},
@@ -45,7 +45,7 @@ if(Meteor.isServer) {
 
 		return Stocks.find({
 			$or: [
-				{ virgin: {$ne: "false"} },
+				{ virgin: {$ne: 1} },
 				{ user_id: this.userId },
 			]
 		}, {
@@ -59,12 +59,12 @@ if(Meteor.isServer) {
 		},
 		getDirtySlavesCunt: function() {
 			return Stocks.find({
-				virgin: {$eq: "false"},
+				virgin: {$eq: 0},
 			}).count();
 		},
 		getCleanSlavesCunt: function() {
 			return Stocks.find({
-				virgin: {$eq: "true"},
+				virgin: {$eq: 1},
 			}).count();
 		},
 	})
@@ -148,11 +148,11 @@ if (Meteor.isClient) {
 		// window height() calculate the height of browser client area (document), substracted to remove the gap from top edge scrollbar to bottom of document body height
 		var distance = target.height() - $(window).height();
 
-		console.log("DIST:"+distance+
-			" BODY:"+  target.height() +
-			" SCROLLTOP:"+$(window).scrollTop() +
-			" WINDOW:"+ $(window).height()+
-			" OFFSET:"+ target.offset().top);
+		// console.log("DIST:"+distance+
+		// 	" BODY:"+  target.height() +
+		// 	" SCROLLTOP:"+$(window).scrollTop() +
+		// 	" WINDOW:"+ $(window).height()+
+		// 	" OFFSET:"+ target.offset().top);
 		if(target.offset().top < threshold) {
 			console.log("TRIGGER LOAD");
 			Session.set("slaves_limit", Session.get("slaves_limit") + slaves_expansion);
