@@ -53,14 +53,20 @@ if(Meteor.isServer) {
 		});
 	});
 
-	Meteor.publish('fullstocks', function() {
-		if(!this.userId) {
-			return this.ready();
-		}
-
-		return Stocks.find({
-			user_id: this.userId,
-		})
+	Meteor.methods({
+		getTotalSlavesCunt: function() {
+			return Stocks.find().count();
+		},
+		getDirtySlavesCunt: function() {
+			return Stocks.find({
+				virgin: {$eq: "false"},
+			}).count();
+		},
+		getCleanSlavesCunt: function() {
+			return Stocks.find({
+				virgin: {$eq: "true"},
+			}).count();
+		},
 	})
 
 	Meteor.startup(function () {
@@ -98,19 +104,36 @@ if (Meteor.isClient) {
 		}
 	});
 
+	// setInterval(function() {
+		
+	// }, 1000 * 1);
 	Template.climax.helpers({
-		total: function() {
+		current: function() {
 			return Stocks.find().count();
 		},
+		total: function() {
+			Session.setDefault("total_slaves_cunt", 0);
+			Meteor.call('getTotalSlavesCunt', function(error, response) {
+				// console.log("ERROR", error, "RESPONSE", response);
+				Session.set("total_slaves_cunt", response);
+			});
+			return Session.get("total_slaves_cunt");
+		},
 		dirty: function() {
-			return Stocks.find({
-				virgin: {$eq: false},
-			}).count();
+			Session.setDefault("dirty_slaves_cunt", 0);
+			Meteor.call('getDirtySlavesCunt', function(error, response) {
+				// console.log("ERROR", error, "RESPONSE", response);
+				Session.set("dirty_slaves_cunt", response);
+			});
+			return Session.get("dirty_slaves_cunt");
 		},
 		clean: function() {
-			return Stocks.find({
-				virgin: {$eq: true},
-			}).count();
+			Session.setDefault("clean_slaves_cunt", 0);
+			Meteor.call('getCleanSlavesCunt', function(error, response) {
+				// console.log("ERROR", error, "RESPONSE", response);
+				Session.set("clean_slaves_cunt", response);
+			});
+			return Session.get("clean_slaves_cunt");
 		},
 	})
 
