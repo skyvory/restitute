@@ -135,7 +135,7 @@ if (Meteor.isClient) {
 			});
 			return Session.get("clean_slaves_cunt");
 		},
-	})
+	});
 
 	// whenever #showMoreResults becomes visible, retieve more results
 	function loadMore() {
@@ -163,6 +163,15 @@ if (Meteor.isClient) {
 			}
 		}
 	}
+
+	Template.injection.events({
+		"submit .new-slave": function(event) {
+			event.preventDefault();
+			var val = event.target.text.value;
+			Meteor.call("addSlave", val);
+			event.target.text.value = "";
+		},
+	})
 
 	$(window).on('beforeunload', function() {
 		$(window).scrollTop(0);

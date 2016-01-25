@@ -6,7 +6,8 @@
 	{{> loginButtons}}
 
 	{{#if currentUser}}
-		{{> master}}
+		<!-- {{> master}} -->
+		{{> injection}}
 	{{/if}}
 
 	{{> climax}}
@@ -38,4 +39,10 @@
 	<p>Read: {{dirty}}</p>
 	<p>Unread: {{clean}}</p>
 	<p>Current: {{current}}</p>
+</template>
+
+<template name="injection">
+	<form class="new-slave">
+		<input type="text" name="new" />
+	</form>
 </template>
