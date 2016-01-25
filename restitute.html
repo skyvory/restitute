@@ -3,7 +3,13 @@
 </head>
 
 <body>
-	<!-- {{> infinity}} -->
+	{{> loginButtons}}
+
+	{{#if currentUser}}
+		{{> master}}
+	{{/if}}
+
+	{{> climax}}
 
 	<ul>
 		{{> anal}}
@@ -17,8 +23,18 @@
 </body>
 
 
+<template name="master">
+	<span class="master-user">{{currentUser.username}}</span>
+</template>
+
 <template name="anal">
 	{{#each slaves}}
 		<li>{{name}}</li>
 	{{/each}}
+</template>
+
+<template name="climax">
+	<p>Total: {{total}}</p>
+	<p>Read: {{dirty}}</p>
+	<p>Unread: {{clean}}</p>
 </template>

@@ -1,7 +1,6 @@
 Stocks = new Mongo.Collection("stocks");
 
 
-
 // const listexample = {
 // 	name: "ex",
 // 	virgin: 1,
@@ -12,28 +11,28 @@ Stocks = new Mongo.Collection("stocks");
 // server oriented code
 if(Meteor.isServer) {
 
-	// stock_schema = new SimpleSchema({
-	// 	name: {type: String},
-	// 	virgin: {type: Boolean, defaultValue: true},
-	// 	seed: {type: String, optional: true},
-	// 	fertility: {type: String, optional: true, defaultValue: "unknown", allowedValues: ["unknown", "none", "low", "medium", "high"]},
-	// 	status: {type: String, defaultValue: "queue", allowedValues: ["queue", "target", "abort"]},
-	// 	vndb_id: {type: Number, optional: true},
-	// 	user_id: {type: String, regEx: SimpleSchema.RegEx.Id},
-	// 	created_at: {type: Date, defaultValue: new Date()},
-	// 	updated_at: {type: Date, defaultValue: new Date()},
-	// });
+	stock_schema = new SimpleSchema({
+		name: {type: String},
+		virgin: {type: Boolean, defaultValue: true},
+		seed: {type: String, optional: true},
+		fertility: {type: String, optional: true, defaultValue: "unknown", allowedValues: ["unknown", "none", "low", "medium", "high"]},
+		status: {type: String, defaultValue: "queue", allowedValues: ["queue", "target", "abort"]},
+		vndb_id: {type: Number, optional: true},
+		user_id: {type: String, regEx: SimpleSchema.RegEx.Id},
+		created_at: {type: Date, defaultValue: new Date()},
+		updated_at: {type: Date, defaultValue: new Date()},
+	});
 
 	// const MAX_STOCKS = 9999;
 
 	// publisher for stocks
 	Meteor.publish('stocks', function(limit) {
-		// if(!this.userId) {
+		if(!this.userId) {
 			// explanation says returning ready state with empty content let client know it's not loading forever
-			// return this.ready();
-		// }
+			return this.ready();
+		}
 
-		limit = limit ? limit : 1;
+		limit = limit || 0;
 		// validating limit request value
 		new SimpleSchema({
 			limit: {type: Number, optional: true},
@@ -45,14 +44,27 @@ if(Meteor.isServer) {
 		// }
 
 		return Stocks.find({
-			// $or: [
-			// 	{ virgin: {$ne: false} },
-			// 	{ user_id: this.userId },
-			// ]
+			$or: [
+				{ virgin: {$ne: "false"} },
+				{ user_id: this.userId },
+			]
 		}, {
 			limit: limit,
-	// 		limit: 20,
 		});
+	});
+
+	Meteor.publish('fullstocks', function() {
+		if(!this.userId) {
+			return this.ready();
+		}
+
+		return Stocks.find({
+			user_id: this.userId,
+		})
+	})
+
+	Meteor.startup(function () {
+		// code to run on server at startup
 	});
 }
 
@@ -60,7 +72,11 @@ if(Meteor.isServer) {
 
 // client oriented code
 if (Meteor.isClient) {
-	
+
+	Accounts.ui.config({
+		passwordSignupFields: "USERNAME_ONLY",
+	});
+
 	// Meteor.subscribe('stocks');
 
 	var slaves_expansion = 20;
@@ -81,6 +97,22 @@ if (Meteor.isClient) {
 			return !(Stocks.find().count() < Session.get("slaves_limit"));
 		}
 	});
+
+	Template.climax.helpers({
+		total: function() {
+			return Stocks.find().count();
+		},
+		dirty: function() {
+			return Stocks.find({
+				virgin: {$eq: false},
+			}).count();
+		},
+		clean: function() {
+			return Stocks.find({
+				virgin: {$eq: true},
+			}).count();
+		},
+	})
 
 	// whenever #showMoreResults becomes visible, retieve more results
 	function loadMore() {
@@ -109,14 +141,12 @@ if (Meteor.isClient) {
 		}
 	}
 
+	$(window).on('beforeunload', function() {
+		$(window).scrollTop(0);
+	});
+
 	Meteor.startup(function () {
 		// code to run on client at startup
 		$(window).scroll(loadMore);
-	});
-}
-
-if (Meteor.isServer) {
-	Meteor.startup(function () {
-		// code to run on server at startup
 	});
 }
