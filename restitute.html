@@ -1,26 +1,58 @@
 <head>
 	<title>restitute</title>
+	 <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 
 <body>
-	{{> loginButtons}}
 
-	{{#if currentUser}}
-		<!-- {{> master}} -->
-		{{> injection}}
-	{{/if}}
-
-	{{> climax}}
-
-	<ul>
-		{{> anal}}
-	</ul>
-
-	{{#if moreResults}}
-		<div id="showMoreResults" style="margin-left: 35px;">
-			<span class="loading">Loading...</span>
+<div class="ui secondary pointing menu">
+	<a class="active item">
+		Live
+	</a>
+	<a class="item">
+		Dirty
+	</a>
+	<a class="item">
+		<i class="icon mail"></i>Ecstacy
+		<div class="floating ui red label">0</div>
+	</a>
+	<div class="right menu">
+		<div class="item">
+			<div class="ui icon input">
+				<input placeholder="Search..." type="text">
+				<i class="search link icon"></i>
+			</div>
 		</div>
-	{{/if}}
+		<a class="ui item">
+			{{> loginButtons}}
+		</a>
+	</div>
+</div>
+<div class="ui centered grid">
+	<div class="twelve wide column">
+		<div class="row">
+			<div class="ui segment">
+			{{#if currentUser}}
+				<!-- {{> master}} -->
+				{{> injection}}
+			{{/if}}
+			</div>
+		</div>
+		<div class="row">
+			<div class="ui segment">
+				<a class="ui blue left ribbon label">Stocks</a>
+				{{> anal}}
+			</div>
+		</div>
+	</div>
+	<div class="three wide column">
+		<div class="ui raised segment">
+		<a class="ui teal right ribbon label">Stats</a>
+			{{> climax}}
+		</div>
+	</div>
+</div>
+
 </body>
 
 
@@ -29,9 +61,11 @@
 </template>
 
 <template name="anal">
+	<ul>
 	{{#each slaves}}
 		<li>{{name}}</li>
 	{{/each}}
+	</ul>
 </template>
 
 <template name="climax">
