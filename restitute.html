@@ -9,10 +9,10 @@
 	<a class="active item">
 		Live
 	</a>
-	<a class="item">
+	<a class="item disabled">
 		Dirty
 	</a>
-	<a class="item">
+	<a class="item disabled">
 		<i class="icon mail"></i>Ecstacy
 		<div class="floating ui red label">0</div>
 	</a>
@@ -28,7 +28,9 @@
 		</a>
 	</div>
 </div>
+
 <div class="ui centered grid">
+
 	<div class="twelve wide column">
 		<div class="row">
 			<div class="ui segment">
@@ -45,12 +47,16 @@
 			</div>
 		</div>
 	</div>
+
 	<div class="three wide column">
 		<div class="ui raised segment">
 		<a class="ui teal right ribbon label">Stats</a>
 			{{> climax}}
 		</div>
+
+		{{> environment}}
 	</div>
+
 </div>
 
 </body>
@@ -61,11 +67,36 @@
 </template>
 
 <template name="anal">
-	<ul>
-	{{#each slaves}}
-		<li>{{name}}</li>
-	{{/each}}
-	</ul>
+	<div class="ui relaxed celled selection list">
+		{{#each slaves}}
+			<div class="stock-item item">
+				<div class="right floated content">
+					<a class="ui mini tag label">{{fertility}}</a>
+				</div>
+				<img class="ui avatar image" src="no_image_thumb.gif">
+				<div class="content">
+					<div class="header">{{name}}</div>
+					<div class="stock-control" style="display:none;">
+						<span>control</span>
+
+						<div class="fertility-dropdown ui floating dropdown labeled search icon button">
+							<input name="fertility" type="hidden" class="fertility-input">
+							<i class="world icon"></i>
+							<span class="text">Fertility</span>
+							<div class="menu">
+								<div class="item" data-value="unknown">Unknown</div>
+								<div class="item" data-value="none">None</div>
+								<div class="item" data-value="low">Low</div>
+								<div class="item" data-value="medium">Medium</div>
+								<div class="item" data-value="high">High</div>
+							</div>
+						</div>
+					</div>
+					<input type="hidden" name="stockid" value="{{_id._str}}">
+				</div>
+			</div>
+		{{/each}}
+	</div>
 </template>
 
 <template name="climax">
@@ -76,7 +107,22 @@
 </template>
 
 <template name="injection">
-	<form class="new-slave">
-		<input type="text" name="new" />
-	</form>
+	<div class="new-slave ui form">
+		<div class="field">
+			<label>Populate slaves separated by line break</label>
+			<textarea name="newstockarea"></textarea>
+		</div>
+	</div>
+</template>
+
+<template name="environment">
+	<div class="ui icon message">
+		<i class="notched circle loading icon"></i>
+		<div class="content">
+			<div class="header">
+				Alpha Environment
+			</div>
+			<p>This farm is in development for internal use only at the time being.</p>
+		</div>
+	</div>
 </template>

@@ -67,6 +67,12 @@ if(Meteor.isServer) {
 				virgin: {$eq: 1},
 			}).count();
 		},
+		updateFertility: function(stock_id, fertility) {
+			var stock = Stocks.findOne(stock_id);
+			if(stock.user_id !== Meteor.userId()) {
+				throw new Meteor.Error("not-authorized");
+			}
+		}
 	})
 
 	Meteor.startup(function () {
@@ -179,7 +185,7 @@ if (Meteor.isClient) {
 			Meteor.call("addSlave", val);
 			event.target.text.value = "";
 		},
-	})
+	});
 
 	$(window).on('beforeunload', function() {
 		$(window).scrollTop(0);
@@ -189,4 +195,26 @@ if (Meteor.isClient) {
 		// code to run on client at startup
 		$(window).scroll(loadMore);
 	});
+
+	Template.anal.events({
+		"mousedown .stock-item": function(event) {
+			var stock_id = $(event.target).find("input[name=stockid]").val();
+			// var target_element = $(event.target).find("input[name=stockid][value=" + stock_id + "]");
+			// console.log(target_element);
+			// $("<p>xxxxxxxxxxxxxxxxx</p>").appendTo(event.target);
+			var target_element = $(event.target).find(".stock-control");
+			target_element.transition({
+				animation: 'drop',
+				duration: '100ms',
+				queue: true,
+			});
+		},
+		"mouseenter .fertility-dropdown": function(event) {
+			$(event.target).dropdown();
+		},
+		"change .fertility-input": function(event) {
+			console.log(event.target);
+		}
+	});
+
 }
