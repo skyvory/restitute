@@ -68,11 +68,33 @@ if(Meteor.isServer) {
 			}).count();
 		},
 		updateFertility: function(stock_id, fertility) {
+			// load future
+			Future = Npm.require('fibers/future');
+			var myFuture = new Future;
+
 			var stock = Stocks.findOne(stock_id);
 			if(stock.user_id !== Meteor.userId()) {
 				throw new Meteor.Error("not-authorized");
 			}
-		}
+
+			Stocks.update(stock_id, {
+				$set: {
+					fertility: fertility,
+				}
+			}, function(error, result) {
+				if(error) {
+					myFuture.throw(error);
+					console.log("ERROR", error);
+				}
+				if(result) {
+					myFuture.return(result);
+					console.log("RESULT", result);
+					// return {status: "success"};
+				}
+			});
+
+			return myFuture.wait();
+		},
 	})
 
 	Meteor.startup(function () {
@@ -214,7 +236,55 @@ if (Meteor.isClient) {
 		},
 		"change .fertility-input": function(event) {
 			console.log(event.target);
-		}
+			Meteor.call("updateFertility", this._id, event.target.value, function(error, response) {
+				if(error) {
+					console.log(error);
+				}
+				else {
+					console.log(response);
+					showNotification("success", "none");
+				}
+			});
+		},
+	});
+
+	function showNotification(header_message, content_message) {
+		var message = {
+			header: header_message,
+			content: new Date(),
+		};
+		Session.set("notification", message);
+		$(".notification")
+			.transition({
+				animation: 'scale',
+				duration: '0.3s',
+			})
+			.transition({
+				allowRepeats: true,
+				animation: 'pulse',
+				duration: '3s',
+			})
+			.transition({
+				animation: 'scale',
+				duration: '1.5s',
+			})
+		;
+	}
+
+	Template.notification.helpers({
+		header: function() {
+			Session.setDefault("notification", {header: "idle", content: "no content"});
+			return Session.get("notification").header;
+		},
+		content: function() {
+			Session.setDefault("notification", {header: "idle", content: "no content"});
+			return Session.get("notification").content;
+		},
+	});
+
+	Tracker.autorun(function() {
+		var notification = Session.get("notification");
+		console.log("CHANGE", notification);
 	});
 
 }
