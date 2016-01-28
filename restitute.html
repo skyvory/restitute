@@ -87,6 +87,11 @@
 						<span>control</span>
 						<span>{{fertility}}</span>
 
+						<div class="virginity-checkbox ui toggle checkbox">
+							<input name="virginity" type="checkbox" class="virginity-input">
+							<label>Virginity</label>
+						</div>
+
 						<div class="fertility-dropdown ui floating dropdown labeled search icon button">
 							<input name="fertility" type="hidden" class="fertility-input">
 							<i class="world icon"></i>
@@ -97,6 +102,17 @@
 								<div class="item" data-value="low">Low</div>
 								<div class="item" data-value="medium">Medium</div>
 								<div class="item" data-value="high">High</div>
+							</div>
+						</div>
+
+						<div class="status-dropdown ui floating dropdown labeled search icon button">
+							<input name="status" type="hidden" class="status-input">
+							<i class="world icon"></i>
+							<span class="text">Status</span>
+							<div class="menu">
+								<div class="item" data-value="queue">Queue</div>
+								<div class="item" data-value="target">Target</div>
+								<div class="item" data-value="abort">Abort</div>
 							</div>
 						</div>
 					</div>

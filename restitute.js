@@ -6,12 +6,12 @@ Stocks = new Mongo.Collection("stocks");
 // 	virgin: 1,
 // 	user_id: "_000",
 // };
-// stock_schema.validate(listexample);
+// stockSchema.validate(listexample);
 
 // server oriented code
 if(Meteor.isServer) {
 
-	stock_schema = new SimpleSchema({
+	stockSchema = new SimpleSchema({
 		name: {type: String},
 		virgin: {type: Number, defaultValue: 1},
 		seed: {type: String, optional: true},
@@ -67,6 +67,41 @@ if(Meteor.isServer) {
 				virgin: {$eq: 1},
 			}).count();
 		},
+		updateVirginity: function(stock_id, data) {
+			Future = Npm.require('fibers/future');
+			var mirai = new Future;
+
+			var stock = Stocks.findOne(stock_id);
+			if(stock.user_id !== Meteor.userId()) {
+				throw new Meteor.Error("not-authorized");
+			}
+
+			// translate virginity to integer
+			data.virgin = Number(data.virgin);
+			if(!data.virgin && data.virgin != 0) {
+				throw new Meteor.Error("invalid-type", "Invalid type of Number used against virginity.");
+			}
+
+			// validte against schema
+			// stockSchema.validate(data);
+
+			Stocks.update(stock_id, {
+				$set: {
+					virgin: data.virgin,
+				}
+			}, function(error, result) {
+				if(error) {
+					mirai.throw(error);
+					console.log("ERROR", error);
+				}
+				if(result) {
+					mirai.return(result);
+					console.log("RESULT", result);
+				}
+			});
+
+			return mirai.wait();
+		},
 		updateFertility: function(stock_id, fertility) {
 			// load future
 			Future = Npm.require('fibers/future');
@@ -94,6 +129,31 @@ if(Meteor.isServer) {
 			});
 
 			return myFuture.wait();
+		},
+		updateStatus: function(stock_id, status) {
+			Future = Npm.require('fibers/future');
+			var mirai = new Future;
+
+			var stock = Stocks.findOne(stock_id);
+			if(stock.user_id !== Meteor.userId()) {
+				throw new Meteor.Error("not-authorized");
+			}
+
+			Stocks.update(stock_id, {
+				$set: {
+					status: status,
+				}
+			}, function(error, result) {
+				if(error) {
+					mirai.throw(error);
+					console.log("ERROR", error);
+				}
+				if(result) {
+					mirai.return(result);
+				}
+			});
+
+			return mirai.wait();
 		},
 	})
 
@@ -218,6 +278,11 @@ if (Meteor.isClient) {
 		$(window).scroll(loadMore);
 	});
 
+
+	Template.anal.rendered = function() {
+		// $('.ui.checkbox').checkbox();
+	}
+
 	Template.anal.events({
 		"mousedown .stock-item": function(event) {
 			var stock_id = $(event.target).find("input[name=stockid]").val();
@@ -235,14 +300,45 @@ if (Meteor.isClient) {
 			$(event.target).dropdown();
 		},
 		"change .fertility-input": function(event) {
-			console.log(event.target);
 			Meteor.call("updateFertility", this._id, event.target.value, function(error, response) {
 				if(error) {
 					console.log(error);
 				}
 				else {
-					console.log(response);
-					showNotification("success", "none");
+					showNotification("Womb fertilized", "none");
+				}
+			});
+		},
+		"mouseenter .virginity-checkbox": function(event) {
+			$(event.target).checkbox();
+		},
+		"change .virginity-checkbox": function(event) {
+			console.log(event);
+			var virginity = $(event.target).prop('checked') ? '1' : '0';
+			console.log("XXX", virginity);
+			data = {
+				virgin: virginity,
+			};
+			Meteor.call("updateVirginity", this._id, data, function(error, response) {
+				if(error) {
+					console.log(error);
+				}
+				else {
+					showNotification("Virginity lost", "none");
+				}
+			});
+		},
+		"mouseenter .status-dropdown": function(event) {
+			$(event.target).dropdown();
+		},
+		"change .status-input": function(event) {
+			// console.log(event.target.value);
+			Meteor.call("updateStatus", this._id, event.target.value, function(error, response) {
+				if(error) {
+					console.log(error);
+				}
+				else {
+					showNotification("Status updated", "none");
 				}
 			});
 		},
@@ -282,9 +378,9 @@ if (Meteor.isClient) {
 		},
 	});
 
-	Tracker.autorun(function() {
-		var notification = Session.get("notification");
-		console.log("CHANGE", notification);
-	});
+	// Tracker.autorun(function() {
+	// 	var notification = Session.get("notification");
+	// 	console.log("CHANGE", notification);
+	// });
 
 }
