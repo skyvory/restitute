@@ -13,7 +13,7 @@ if(Meteor.isServer) {
 
 	stockSchema = new SimpleSchema({
 		name: {type: String},
-		virgin: {type: Number, defaultValue: 1},
+		virgin: {type: Number, defaultValue: 1, allowedValues: [0,1]},
 		seed: {type: String, optional: true},
 		fertility: {type: String, optional: true, defaultValue: "unknown", allowedValues: ["unknown", "none", "low", "medium", "high"]},
 		status: {type: String, defaultValue: "queue", allowedValues: ["queue", "target", "abort"]},
@@ -22,6 +22,18 @@ if(Meteor.isServer) {
 		created_at: {type: Date, defaultValue: new Date()},
 		updated_at: {type: Date, defaultValue: new Date()},
 	});
+
+	stockUpdateSchema = new SimpleSchema({
+		name: {type: String, optional: true},
+		virgin: {type: Number, optional: true, allowedValues: [0,1]},
+		seed: {type: String, optional: true},
+		fertility: {type: String, optional: true, allowedValues: ["unknown", "none", "low", "medium", "high"]},
+		status: {type: String, optional: true, allowedValues: ["queue", "target", "abort"]},
+		vndb_id: {type: Number, optional: true},
+		user_id: {type: String, optional: true, regEx: SimpleSchema.RegEx.Id},
+		created_at: {type: Date, optional: true},
+		updated_at: {type: Date, defaultValue: new Date()},
+	})
 
 	// const MAX_STOCKS = 9999;
 
@@ -83,7 +95,8 @@ if(Meteor.isServer) {
 			}
 
 			// validte against schema
-			// stockSchema.validate(data);
+			stockUpdateSchema.clean(data);
+			stockUpdateSchema.validate(data);
 
 			Stocks.update(stock_id, {
 				$set: {
@@ -96,13 +109,12 @@ if(Meteor.isServer) {
 				}
 				if(result) {
 					mirai.return(result);
-					console.log("RESULT", result);
 				}
 			});
 
 			return mirai.wait();
 		},
-		updateFertility: function(stock_id, fertility) {
+		updateFertility: function(stock_id, data) {
 			// load future
 			Future = Npm.require('fibers/future');
 			var myFuture = new Future;
@@ -112,9 +124,12 @@ if(Meteor.isServer) {
 				throw new Meteor.Error("not-authorized");
 			}
 
+			stockUpdateSchema.clean(data);
+			stockUpdateSchema.validate(data);
+
 			Stocks.update(stock_id, {
 				$set: {
-					fertility: fertility,
+					fertility: data.fertility,
 				}
 			}, function(error, result) {
 				if(error) {
@@ -123,14 +138,13 @@ if(Meteor.isServer) {
 				}
 				if(result) {
 					myFuture.return(result);
-					console.log("RESULT", result);
 					// return {status: "success"};
 				}
 			});
 
 			return myFuture.wait();
 		},
-		updateStatus: function(stock_id, status) {
+		updateStatus: function(stock_id, data) {
 			Future = Npm.require('fibers/future');
 			var mirai = new Future;
 
@@ -139,9 +153,12 @@ if(Meteor.isServer) {
 				throw new Meteor.Error("not-authorized");
 			}
 
+			stockUpdateSchema.clean(data);
+			stockUpdateSchema.validate(data);
+
 			Stocks.update(stock_id, {
 				$set: {
-					status: status,
+					status: data.status,
 				}
 			}, function(error, result) {
 				if(error) {
@@ -189,6 +206,15 @@ if (Meteor.isClient) {
 		},
 		moreResults: function() {
 			return !(Stocks.find().count() < Session.get("slaves_limit"));
+		},
+		virginity_check: function() {
+			if(this.virgin == 1) {
+				return "checked";
+			}
+			else {
+				return "";
+			}
+			return this;
 		}
 	});
 
@@ -279,9 +305,9 @@ if (Meteor.isClient) {
 	});
 
 
-	Template.anal.rendered = function() {
-		// $('.ui.checkbox').checkbox();
-	}
+	// Template.anal.onRendered(function() {
+	// 	this.$(".fertility-dropdown").dropdown();
+	// });
 
 	Template.anal.events({
 		"mousedown .stock-item": function(event) {
@@ -295,27 +321,16 @@ if (Meteor.isClient) {
 				duration: '100ms',
 				queue: true,
 			});
-		},
-		"mouseenter .fertility-dropdown": function(event) {
-			$(event.target).dropdown();
-		},
-		"change .fertility-input": function(event) {
-			Meteor.call("updateFertility", this._id, event.target.value, function(error, response) {
-				if(error) {
-					console.log(error);
-				}
-				else {
-					showNotification("Womb fertilized", "none");
-				}
-			});
+			if(this.virgin == 1) {
+				$(event.target).find(".virginity-checkbox").checkbox("set checked");
+			}
+			$(event.target).find(".fertility-dropdown").dropdown();
 		},
 		"mouseenter .virginity-checkbox": function(event) {
 			$(event.target).checkbox();
 		},
-		"change .virginity-checkbox": function(event) {
-			console.log(event);
+		"click .virginity-checkbox": function(event) {
 			var virginity = $(event.target).prop('checked') ? '1' : '0';
-			console.log("XXX", virginity);
 			data = {
 				virgin: virginity,
 			};
@@ -328,12 +343,30 @@ if (Meteor.isClient) {
 				}
 			});
 		},
+		"mouseenter .fertility-dropdown": function(event) {
+			$(event.target).dropdown();
+		},
+		"change .fertility-input": function(event) {
+			data = {
+				fertility: event.target.value,
+			};
+			Meteor.call("updateFertility", this._id, data, function(error, response) {
+				if(error) {
+					console.log(error);
+				}
+				else {
+					showNotification("Womb fertilized", "none");
+				}
+			});
+		},
 		"mouseenter .status-dropdown": function(event) {
 			$(event.target).dropdown();
 		},
 		"change .status-input": function(event) {
-			// console.log(event.target.value);
-			Meteor.call("updateStatus", this._id, event.target.value, function(error, response) {
+			data = {
+				status: event.target.value,
+			}
+			Meteor.call("updateStatus", this._id, data, function(error, response) {
 				if(error) {
 					console.log(error);
 				}
@@ -358,7 +391,7 @@ if (Meteor.isClient) {
 			.transition({
 				allowRepeats: true,
 				animation: 'pulse',
-				duration: '3s',
+				duration: '2s',
 			})
 			.transition({
 				animation: 'scale',

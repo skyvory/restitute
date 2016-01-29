@@ -80,30 +80,40 @@
 				<div class="right floated content">
 					<a class="ui mini tag label">{{fertility}}</a>
 				</div>
-				<img class="ui avatar image" src="no_image_thumb.gif">
+				<div class="stock-cover ui avatar image"><!-- todo: remove ui avatar class on expand -->
+					<img src="no_image_thumb.gif">
+				</div>
+				<!-- <img class="ui avatar image" src="no_image_thumb.gif"> -->
 				<div class="content">
 					<div class="header">{{name}}</div>
-					<div class="stock-control" style="display:none;">
-						<span>control</span>
-						<span>{{fertility}}</span>
-
-						<div class="virginity-checkbox ui toggle checkbox">
-							<input name="virginity" type="checkbox" class="virginity-input">
-							<label>Virginity</label>
-						</div>
-
-						<div class="fertility-dropdown ui floating dropdown labeled search icon button">
-							<input name="fertility" type="hidden" class="fertility-input">
-							<i class="world icon"></i>
-							<span class="text">Fertility</span>
-							<div class="menu">
-								<div class="item" data-value="unknown">Unknown</div>
-								<div class="item" data-value="none">None</div>
-								<div class="item" data-value="low">Low</div>
-								<div class="item" data-value="medium">Medium</div>
-								<div class="item" data-value="high">High</div>
+					<div class="meta">
+						<span>{{_id._str}}</span>
+					</div>
+					<div class="stock-control ui form" style="display:none;">
+						<div class="fields">
+							<div class="field">
+								<div class="virginity-checkbox ui toggle checkbox">
+									<label>Virginity {{virginity_check}}</label>
+									<input name="virginity" type="checkbox" class="virginity-input">
+								</div>
+							</div>
+							<div class="field">
+								<div class="fertility-dropdown ui floating dropdown labeled search icon button">
+									<input name="fertility" type="hidden" class="fertility-input" value="{{fertility}}">
+									<i class="world icon"></i>
+									<span class="text">Fertility</span>
+									<div class="menu">
+										<div class="item" data-value="unknown">Unknown</div>
+										<div class="item" data-value="none">None</div>
+										<div class="item" data-value="low">Low</div>
+										<div class="item" data-value="medium">Medium</div>
+										<div class="item" data-value="high">High</div>
+									</div>
+								</div>
 							</div>
 						</div>
+
+						
 
 						<div class="status-dropdown ui floating dropdown labeled search icon button">
 							<input name="status" type="hidden" class="status-input">
