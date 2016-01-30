@@ -16,7 +16,7 @@ if(Meteor.isServer) {
 		virgin: {type: Number, defaultValue: 1, allowedValues: [0,1]},
 		seed: {type: String, optional: true},
 		fertility: {type: String, optional: true, defaultValue: "unknown", allowedValues: ["unknown", "none", "low", "medium", "high"]},
-		status: {type: String, defaultValue: "queue", allowedValues: ["queue", "target", "abort"]},
+		status: {type: String, defaultValue: "queue", allowedValues: ["queue", "wishlist", "dropped"]},
 		vndb_id: {type: Number, optional: true},
 		cover_image: {type: String, optional: true},
 		sample_images: {type: [String], optional: true},
@@ -30,7 +30,7 @@ if(Meteor.isServer) {
 		virgin: {type: Number, optional: true, allowedValues: [0,1]},
 		seed: {type: String, optional: true},
 		fertility: {type: String, optional: true, allowedValues: ["unknown", "none", "low", "medium", "high"]},
-		status: {type: String, optional: true, allowedValues: ["queue", "target", "abort"]},
+		status: {type: String, optional: true, allowedValues: ["queue", "wishlist", "dropped"]},
 		vndb_id: {type: Number, optional: true},
 		cover_image: {type: String, optional: true},
 		sample_images: {type: [String], optional: true},
@@ -386,6 +386,7 @@ if (Meteor.isClient) {
 				}
 			});
 		},
+	
 	});
 
 	function showNotification(header_message, content_message) {
@@ -426,5 +427,6 @@ if (Meteor.isClient) {
 	// 	var notification = Session.get("notification");
 	// 	console.log("CHANGE", notification);
 	// });
+
 
 }

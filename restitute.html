@@ -129,8 +129,8 @@
 											<span class="text">Status</span>
 											<div class="menu">
 												<div class="item" data-value="queue">Queue</div>
-												<div class="item" data-value="target">Target</div>
-												<div class="item" data-value="abort">Abort</div>
+												<div class="item" data-value="wishlist">Wishlist</div>
+												<div class="item" data-value="dropped">Dropped</div>
 											</div>
 										</div>
 									</div>
@@ -146,6 +146,7 @@
 							</div>
 						</div>
 
+						{{> sample}}
 					</div>
 
 
@@ -197,5 +198,17 @@
 		{{#if content}}
 			<p>{{content}}</p>
 		{{/if}}
+	</div>
+</template>
+
+<template name="sample">
+	<div class="ui small images">
+	<!-- 	{{#each images}}
+			<img src="{{image}}">
+		{{/each}} -->
+		<img class="ui fluid image" src="no_image_thumb.gif" style="max-width:23%;">
+		<img class="ui fluid image" src="no_image_thumb.gif" style="max-width:23%;">
+		<img class="ui fluid image" src="no_image_thumb.gif" style="max-width:23%;">
+		<img class="ui fluid image" src="no_image_thumb.gif" style="max-width:23%;">
 	</div>
 </template>
