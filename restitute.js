@@ -324,13 +324,20 @@ if (Meteor.isClient) {
 			if(this.virgin == 1) {
 				$(event.target).find(".virginity-checkbox").checkbox("set checked");
 			}
+			else {
+				$(event.target).find(".virginity-checkbox").checkbox();
+			}
 			$(event.target).find(".fertility-dropdown").dropdown();
+			$(event.target).find(".status-dropdown").dropdown();
 		},
 		"mouseenter .virginity-checkbox": function(event) {
-			$(event.target).checkbox();
 		},
-		"click .virginity-checkbox": function(event) {
+		"change .virginity-checkbox": function(event) {
 			var virginity = $(event.target).prop('checked') ? '1' : '0';
+			// prevent update request happens despite same value, this occurs due to on position switch being applied when clicking-to-expand item
+			if(virginity == this.virgin) {
+				return;
+			}
 			data = {
 				virgin: virginity,
 			};
@@ -343,9 +350,9 @@ if (Meteor.isClient) {
 				}
 			});
 		},
-		"mouseenter .fertility-dropdown": function(event) {
-			$(event.target).dropdown();
-		},
+		// "mouseenter .fertility-dropdown": function(event) {
+		// 	$(event.target).dropdown();
+		// },
 		"change .fertility-input": function(event) {
 			data = {
 				fertility: event.target.value,
@@ -359,9 +366,9 @@ if (Meteor.isClient) {
 				}
 			});
 		},
-		"mouseenter .status-dropdown": function(event) {
-			$(event.target).dropdown();
-		},
+		// "mouseenter .status-dropdown": function(event) {
+		// 	$(event.target).dropdown();
+		// },
 		"change .status-input": function(event) {
 			data = {
 				status: event.target.value,
