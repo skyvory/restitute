@@ -222,5 +222,10 @@
 		{{#each images}}
 			<img class="ui fluid image" src="{{this}}" style="max-width:23%;">
 		{{/each}}
+		{{#unless images}}
+			<center>
+				<img src="no_image_thumb.gif">
+			</center>
+		{{/unless}}
 	</div>
 </template>
