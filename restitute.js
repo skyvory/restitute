@@ -176,7 +176,66 @@ if(Meteor.isServer) {
 
 			return mirai.wait();
 		},
-	})
+		fetchSample: function(stock_id) {
+			Future = Npm.require('fibers/future');
+			var mirai = new Future;
+
+			var stock = Stocks.findOne(stock_id);
+			if(stock.user_id !== Meteor.userId()) {
+				throw new Meteor.Error("not-authorized");
+			}
+
+			// fetch google images
+			// for asynchronous call
+			this.unblock();
+
+			var search_params = {
+				q: stock.name,
+				key: "AIzaSyCCB_noAIr7nVpUhOYSsyhZmMS_z6E_tIw ",
+				cx: "015746608515890873103:n_gwt5bhm2o",
+				searchType: "image",
+				googlehost: "google.co.jp",
+				num: 10,
+				safe: "off",
+			};
+			result = HTTP.call("GET", "https://www.googleapis.com/customsearch/v1", {params: search_params}, function(error, result) {
+				if(error) {
+					console.log("ERROR", error);
+					mirai.throw(error);
+				}
+				if(result) {
+					// mirai.return(result);
+					var links = [];
+					for(var i = 0; i < 4; i++) {
+						links.push(result.data.items[i].link);
+					}
+					var data = {
+						sample_images:  links,
+					};
+
+					stockUpdateSchema.clean(data);
+					stockUpdateSchema.validate(data);
+
+					Stocks.update(stock_id, {
+						$set: {
+							sample_images: data.sample_images,
+							updated_at: data.updated_at,
+						}
+					}, function(error, result) {
+						if(error) {
+							console.log("ERROR", error);
+						}
+						if(result) {
+							mirai.return("sample images updated success");
+						}
+					});
+				}
+			});
+
+			return mirai.wait();
+
+		},
+	});
 
 	Meteor.startup(function () {
 		// code to run on server at startup
@@ -386,7 +445,6 @@ if (Meteor.isClient) {
 				}
 			});
 		},
-	
 	});
 
 	function showNotification(header_message, content_message) {
@@ -428,5 +486,24 @@ if (Meteor.isClient) {
 	// 	console.log("CHANGE", notification);
 	// });
 
+	Template.sample.helpers({
+		images: function() {
+			return this.sample_images;
+		},
+	});
+
+	Template.sample.events({
+		"click .sample-fetch-button": function(event) {
+			Meteor.call("fetchSample", this._id, function(error, response) {
+				if(error) {
+					console.log(error);
+				}
+				else {
+					console.log(response);
+					showNotification("Sample supposedly refreshed with new images", "none");
+				}
+			})
+		},
+	})
 
 }

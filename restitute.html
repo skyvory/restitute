@@ -202,13 +202,25 @@
 </template>
 
 <template name="sample">
+	<div class="ui buttons">
+		<div class="sample-fetch-button medium ui animated fade right floated button">
+			<div class="visible content">
+				<i class="repeat icon"></i>
+				samples are outdated?
+			</div>
+			<div class="hidden content">
+				<i class="repeat loading icon"></i>
+				refetch samples
+			</div>
+		</div>
+	</div>
+	<h4 class="ui horizontal divider header">
+		<i class="bar chart icon"></i>
+		Samples
+	</h4>
 	<div class="ui small images">
-	<!-- 	{{#each images}}
-			<img src="{{image}}">
-		{{/each}} -->
-		<img class="ui fluid image" src="no_image_thumb.gif" style="max-width:23%;">
-		<img class="ui fluid image" src="no_image_thumb.gif" style="max-width:23%;">
-		<img class="ui fluid image" src="no_image_thumb.gif" style="max-width:23%;">
-		<img class="ui fluid image" src="no_image_thumb.gif" style="max-width:23%;">
+		{{#each images}}
+			<img class="ui fluid image" src="{{this}}" style="max-width:23%;">
+		{{/each}}
 	</div>
 </template>
