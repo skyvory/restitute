@@ -66,6 +66,7 @@ if(Meteor.isServer) {
 			]
 		}, {
 			limit: limit,
+			sort: {created_at: -1},
 		});
 	});
 
