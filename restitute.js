@@ -17,7 +17,7 @@ if(Meteor.isServer) {
 		seed: {type: String, optional: true},
 		fertility: {type: String, optional: true, defaultValue: "unknown", allowedValues: ["unknown", "none", "low", "medium", "high"]},
 		status: {type: String, defaultValue: "queue", allowedValues: ["queue", "wishlist", "dropped"]},
-		vndb_id: {type: Number, optional: true},
+		"vndb.vn_id": {type: Number, optional: true},
 		cover_image: {type: String, optional: true},
 		sample_images: {type: [String], optional: true},
 		user_id: {type: String, regEx: SimpleSchema.RegEx.Id},
@@ -31,7 +31,7 @@ if(Meteor.isServer) {
 		seed: {type: String, optional: true},
 		fertility: {type: String, optional: true, allowedValues: ["unknown", "none", "low", "medium", "high"]},
 		status: {type: String, optional: true, allowedValues: ["queue", "wishlist", "dropped"]},
-		vndb_id: {type: Number, optional: true},
+		"vndb.vn_id": {type: Number, optional: true},
 		cover_image: {type: String, optional: true},
 		sample_images: {type: [String], optional: true},
 		user_id: {type: String, optional: true, regEx: SimpleSchema.RegEx.Id},
@@ -234,8 +234,37 @@ if(Meteor.isServer) {
 			});
 
 			return mirai.wait();
-
 		},
+		updateVndb: function(stock_id, data) {
+			Future = Npm.require('fibers/future');
+			var mirai = new Future;
+
+			var stock = Stocks.findOne(stock_id);
+			if(stock.user_id !== Meteor.userId()) {
+				throw new Meteor.Error("not-authorized");
+			}
+
+			stockUpdateSchema.clean(data);
+			stockUpdateSchema.validate(data);
+
+			Stocks.update(stock_id, {
+				$set: {
+					vndb: {
+						vn_id: data.vndb.vn_id,
+					}
+				}
+			}, function(error, result) {
+				if(error) {
+					mirai.throw(error);
+					console.log("ERROR"< error);
+				}
+				if(result) {
+					mirai.return(result);
+				}
+			});
+
+			return mirai.wait();
+		}
 	});
 
 	Meteor.startup(function () {
@@ -443,6 +472,21 @@ if (Meteor.isClient) {
 				}
 				else {
 					showNotification("Status updated", "none");
+				}
+			});
+		},
+		"change .vndb-id-input": function(event) {
+			data = {
+				vndb: {
+					vn_id: event.target.value,
+				},
+			};
+			Meteor.call("updateVndb", this._id, data, function(error, response) {
+				if(error) {
+					console.log(error);
+				}
+				else {
+					showNotification("VNDB ID updated", "none");
 				}
 			});
 		},
