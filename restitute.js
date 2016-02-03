@@ -308,7 +308,7 @@ if (Meteor.isClient) {
 				return "";
 			}
 			return this;
-		}
+		},
 	});
 
 	// setInterval(function() {
@@ -405,7 +405,6 @@ if (Meteor.isClient) {
 	Template.anal.events({
 		"mousedown .stock-item": function(event) {
 			var target_element = $("#"+this._id._str).find(".stock-control");
-			console.log(target_element);
 			if(target_element.hasClass("visible")) {
 				return;
 			}
@@ -491,6 +490,16 @@ if (Meteor.isClient) {
 				}
 			});
 		},
+		"click .anal-plug": function(event) {
+			var target_element = $("#"+this._id._str).find(".stock-control");
+			if(target_element.hasClass("visible")) {
+				target_element.transition({
+					animation: 'scale',
+					duration: '200ms',
+					queue: true,
+				});
+			}
+		}
 	});
 
 	function showNotification(header_message, content_message) {

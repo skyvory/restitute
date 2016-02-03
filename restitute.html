@@ -91,67 +91,68 @@
 					</div>
 					<div class="stock-control ui form" style="display:none;">
 
-					<div class="ui items">
-						<div class="item">
-							<div class="image" style="height:200px; width:250px;">
-								<img src="no_image_thumb.gif" style="max-height:100%; max-width:100%; height: auto; width:auto;" class="ui centered image">
-							</div>
-							<div class="content">
-
-								<label>Virginity</label>
-								<div class="field">
-									<div class="virginity-checkbox ui toggle checkbox">
-										<input name="virginity" type="checkbox" class="virginity-input">
-									</div>
-								</div>
-
-								<div class="fields" style="padding:10px;">
-									<div class="field">
-										<span>Fertility</span>
-										<div class="fertility-dropdown ui floating dropdown labeled search icon button">
-											<input name="fertility" type="hidden" class="fertility-input" value="{{fertility}}">
-											<i class="world icon"></i>
-											<span class="text">Fertility</span>
-											<div class="menu">
-												<div class="item" data-value="unknown">Unknown</div>
-												<div class="item" data-value="none">None</div>
-												<div class="item" data-value="low">Low</div>
-												<div class="item" data-value="medium">Medium</div>
-												<div class="item" data-value="high">High</div>
-											</div>
-										</div>
-									</div>
-									<div class="field">
-										<span>Status</span>
-										<div class="status-dropdown ui floating dropdown labeled search icon button">
-											<input name="status" type="hidden" class="status-input" value="{{status}}">
-											<i class="world icon"></i>
-											<span class="text">Status</span>
-											<div class="menu">
-												<div class="item" data-value="queue">Queue</div>
-												<div class="item" data-value="wishlist">Wishlist</div>
-												<div class="item" data-value="dropped">Dropped</div>
-											</div>
-										</div>
-									</div>
-
-								</div>
-
-
-								<div class="field">
-									<label>VNDB ID</label>
-									<input name="vndbid" placeholder="VNDB VN ID" class="vndb-id-input" value="{{vndb.vn_id}}">
-								</div>
-
-							</div>
+						<div class="anal-plug floating ui red mini label">
+							close
+							<i class="delete icon"></i>
 						</div>
 
-						{{> sample}}
-					</div>
+						<div class="ui items">
+							<div class="item">
+								<div class="image" style="height:200px; width:250px;">
+									<img src="no_image_thumb.gif" style="max-height:100%; max-width:100%; height: auto; width:auto;" class="ui centered image">
+								</div>
+								<div class="content">
+
+									<label>Virginity</label>
+									<div class="field">
+										<div class="virginity-checkbox ui toggle checkbox">
+											<input name="virginity" type="checkbox" class="virginity-input">
+										</div>
+									</div>
+
+									<div class="fields" style="padding:10px;">
+										<div class="field">
+											<span>Fertility</span>
+											<div class="fertility-dropdown ui floating dropdown labeled search icon button">
+												<input name="fertility" type="hidden" class="fertility-input" value="{{fertility}}">
+												<i class="world icon"></i>
+												<span class="text">Fertility</span>
+												<div class="menu">
+													<div class="item" data-value="unknown">Unknown</div>
+													<div class="item" data-value="none">None</div>
+													<div class="item" data-value="low">Low</div>
+													<div class="item" data-value="medium">Medium</div>
+													<div class="item" data-value="high">High</div>
+												</div>
+											</div>
+										</div>
+										<div class="field">
+											<span>Status</span>
+											<div class="status-dropdown ui floating dropdown labeled search icon button">
+												<input name="status" type="hidden" class="status-input" value="{{status}}">
+												<i class="world icon"></i>
+												<span class="text">Status</span>
+												<div class="menu">
+													<div class="item" data-value="queue">Queue</div>
+													<div class="item" data-value="wishlist">Wishlist</div>
+													<div class="item" data-value="dropped">Dropped</div>
+												</div>
+											</div>
+										</div>
+
+									</div>
 
 
-						
+									<div class="field">
+										<label>VNDB ID</label>
+										<input name="vndbid" placeholder="VNDB VN ID" class="vndb-id-input" value="{{vndb.vn_id}}">
+									</div>
 
+								</div>
+							</div>
+
+							{{> sample}}
+						</div>
 						
 					</div>
 					<input type="hidden" name="stockid" value="{{_id._str}}">
