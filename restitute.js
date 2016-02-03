@@ -404,24 +404,25 @@ if (Meteor.isClient) {
 
 	Template.anal.events({
 		"mousedown .stock-item": function(event) {
-			var stock_id = $(event.target).find("input[name=stockid]").val();
-			// var target_element = $(event.target).find("input[name=stockid][value=" + stock_id + "]");
-			// console.log(target_element);
-			// $("<p>xxxxxxxxxxxxxxxxx</p>").appendTo(event.target);
-			var target_element = $(event.target).find(".stock-control");
+			var target_element = $("#"+this._id._str).find(".stock-control");
+			console.log(target_element);
+			if(target_element.hasClass("visible")) {
+				return;
+			}
+			var stock_id = $("#"+this._id._str).find("input[name=stockid]").val();
 			target_element.transition({
 				animation: 'drop',
 				duration: '100ms',
 				queue: true,
 			});
 			if(this.virgin == 1) {
-				$(event.target).find(".virginity-checkbox").checkbox("set checked");
+				$("#"+this._id._str).find(".virginity-checkbox").checkbox("set checked");
 			}
 			else {
-				$(event.target).find(".virginity-checkbox").checkbox();
+				$("#"+this._id._str).find(".virginity-checkbox").checkbox();
 			}
-			$(event.target).find(".fertility-dropdown").dropdown();
-			$(event.target).find(".status-dropdown").dropdown();
+			$("#"+this._id._str).find(".fertility-dropdown").dropdown();
+			$("#"+this._id._str).find(".status-dropdown").dropdown();
 		},
 		"mouseenter .virginity-checkbox": function(event) {
 		},
