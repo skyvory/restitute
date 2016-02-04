@@ -42,7 +42,7 @@ if(Meteor.isServer) {
 	// const MAX_STOCKS = 9999;
 
 	// publisher for stocks
-	Meteor.publish('stocks', function(limit) {
+	Meteor.publish('stocks', function(limit, filter) {
 		if(!this.userId) {
 			// explanation says returning ready state with empty content let client know it's not loading forever
 			return this.ready();
@@ -58,16 +58,39 @@ if(Meteor.isServer) {
 		// 	sort: {created_at: -1},
 		// 	limit: Math.min(limit, MAX_STOCKS),
 		// }
-
-		return Stocks.find({
-			$or: [
-				{ virgin: {$ne: 1} },
-				{ user_id: this.userId },
-			]
-		}, {
-			limit: limit,
-			sort: {created_at: -1},
-		});
+		console.log(filter);
+		if(filter) {
+			var search_query = filter;
+			var regular_expression = new RegExp(".*" + search_query + ".*");
+			return Stocks.find({
+				$and: [
+					{ user_id: this.userId },
+					{
+						$or: [
+							{ "name": regular_expression },
+							// for  mongodb native full text search, alas currently not working if combined with mongodb's $or expression
+							// { $text: {$search: filter} },
+						]
+					}
+					
+				]
+			}, {
+				score: { $meta: "textScore" },
+				sort: {score: -1},
+				limit: limit,
+			});
+		}
+		else {
+			return Stocks.find({
+				$or: [
+					{ virgin: {$ne: 1} },
+					{ user_id: this.userId },
+				]
+			}, {
+				limit: limit,
+				sort: {created_at: -1},
+			});
+		}
 	});
 
 	Meteor.methods({
@@ -285,12 +308,21 @@ if (Meteor.isClient) {
 
 	var slaves_expansion = 20;
 	Session.setDefault('slaves_limit', slaves_expansion);
+	Session.setDefault("slaves_selection", "");
 	Tracker.autorun(function() {
-		Meteor.subscribe('stocks', Session.get('slaves_limit'));
+		Meteor.subscribe('stocks', Session.get('slaves_limit'), Session.get('slaves_selection'));
 	});
 
 	Template.body.helpers({
 		// helper for body
+	});
+	Template.body.events({
+		"change .stock-search-input": function(event) {
+			// reset limit to default when search query changes
+			Session.set("slaves_limit", slaves_expansion);
+			// apply value of search query into session, of which tracker automatically fetch search results
+			Session.set("slaves_selection", event.target.value);
+		},
 	});
 
 	Template.anal.helpers({
