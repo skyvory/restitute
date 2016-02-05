@@ -370,6 +370,23 @@ if (Meteor.isClient) {
 			// apply value of search query into session, of which tracker automatically fetch search results
 			Session.set("slaves_selection", event.target.value);
 		},
+		"click .new-stock-close-label": function(event) {
+			$(".new-stock-button").transition({
+				animation: 'scale',
+				duration: '500ms',
+				queue: true,
+			});
+			$(".new-stock-form").transition({
+				animation: 'scale',
+				duration: '500ms',
+				queue: true,
+			});
+			$(".new-stock-close-label").transition({
+				animation: 'scale',
+				duration: '500ms',
+				queue: true,
+			});
+		},
 	});
 
 	Template.anal.helpers({
@@ -467,6 +484,23 @@ if (Meteor.isClient) {
 
 			newStockProcess(val);
 			event.target.newstock.value = "";
+		},
+		"click .new-stock-button": function(event) {
+			$(".new-stock-button").transition({
+				animation: 'scale',
+				duration: '500ms',
+				queue: true,
+			});
+			$(".new-stock-form").transition({
+				animation: 'scale',
+				duration: '500ms',
+				queue: true,
+			});
+			$(".new-stock-close-label").transition({
+				animation: 'scale',
+				duration: '500ms',
+				queue: true,
+			});
 		},
 	});
 

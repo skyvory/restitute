@@ -39,6 +39,9 @@
 		<div class="twelve wide column">
 			<div class="row">
 				<div class="ui segment">
+				<a class="new-stock-close-label ui red right corner label" style="display:none;">
+					<i class="close icon"></i>
+				</a>
 				{{#if currentUser}}
 					<!-- {{> master}} -->
 					{{> injection}}
@@ -170,13 +173,14 @@
 </template>
 
 <template name="injection">
-	<form class="new-stock-form ui form">
+	<form class="new-stock-form ui form" style="display:none;">
 		<div class="field">
 			<label>Populate slaves separated by line break</label>
 			<textarea name="newstock" rows="2" class="new-stock-input"></textarea>
 		</div>
 		<button type="submit" class="ui inverted purple button">Import</button>
 	</form>
+	<button class="new-stock-button ui mini inverted teal button">New stock</button>
 </template>
 
 <template name="environment">
