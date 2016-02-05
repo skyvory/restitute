@@ -551,7 +551,14 @@ if (Meteor.isClient) {
 
 		function nextoo() {
 			i++;
-			if(i<count && lines[i] != "") {
+			// skip iteration if line is an empty sting
+			if(i < count && lines[i] == "") {
+				console.log("EMPTY LINE");
+				// >>> temporary increment to progress bar
+				$(".new-stock-progress-bar").progress('increment');
+				nextoo();
+			}
+			else if(i < count) {
 				oo(lines[i]);
 			}
 			else {
