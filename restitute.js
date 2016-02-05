@@ -513,6 +513,22 @@ if (Meteor.isClient) {
 		var count = lines.length;
 		var i = -1;
 
+		// disable textarea
+		$(".new-stock-textarea").prop('disabled', true);
+		// change state of submit button into progress bar
+		$(".new-stock-submit-button").fadeOut(300, function() {
+			$(".new-stock-progress-bar").fadeIn(300);
+		});
+		$(".new-stock-progress-bar").progress({
+			value: 0,
+			total: count,
+			label: 'percent',
+			text: {
+				active: "Training {value} of {total} slaves",
+				success: "Successfully imported {total} new slaves!",
+			}
+		});
+
 		function oo(line) {
 			var data = {
 				name: line,
@@ -523,6 +539,9 @@ if (Meteor.isClient) {
 				}
 				else {
 					console.log("NEXT LINE CALL");
+					// update progress bar
+					$(".new-stock-progress-bar").progress('increment');
+					// wait before next iteration
 					setTimeout(function() {
 						nextoo();
 					}, 500);
@@ -537,6 +556,12 @@ if (Meteor.isClient) {
 			}
 			else {
 				console.log("ITERATION END");
+				// return state of progress bar into submit button
+				$(".new-stock-progress-bar").delay('3600').fadeOut(300, function() {
+					$(".new-stock-submit-button").fadeIn(300);
+				});
+				// reenable textarea
+				$(".new-stock-textarea").prop('disabled', false);
 			}
 		}
 

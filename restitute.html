@@ -177,9 +177,15 @@
 	<form class="new-stock-form ui form" style="display:none;">
 		<div class="field">
 			<label>Populate slaves separated by line break</label>
-			<textarea name="newstock" rows="2" class="new-stock-input"></textarea>
+			<textarea name="newstock" rows="2" class="new-stock-textarea"></textarea>
 		</div>
-		<button type="submit" class="ui inverted purple button">Import</button>
+		<button type="submit" class="new-stock-submit-button ui mini inverted purple button">Import</button>
+		<div class="new-stock-progress-bar ui indicating active progress" style="display:none;">
+			<div class="bar">
+				<div class="progress"></div>
+			</div>
+			<div class="label">now training...</div>
+		</div>
 	</form>
 </template>
 
