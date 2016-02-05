@@ -313,6 +313,27 @@ if(Meteor.isServer) {
 			});
 
 			return mirai.wait();
+		},
+		deleteStock: function(stock_id) {
+			var stock = Stocks.findOne(stock_id);
+			if(stock.user_id !== Meteor.userId()) {
+				throw new Meteor.Error("not-authorized");
+			}
+
+			Future = Npm.require('fibers/future');
+			var mirai = new Future;
+
+			Stocks.remove(stock_id, function(error, result) {
+				if(error) {
+					console.log("ERROR", error);
+					mirai.throw(error);
+				}
+				if(result) {
+					mirai.return(result);
+				}
+			});
+
+			return mirai.wait();
 		}
 	});
 
