@@ -87,7 +87,7 @@
 				<div class="content">
 					<div class="stock-header header">{{name}}</div>
 					<div class="stock-meta meta">
-						<span>{{_id._str}}</span>
+						<span>{{_id}}</span>
 					</div>
 					<div class="stock-control ui form" style="display:none;">
 
@@ -170,12 +170,13 @@
 </template>
 
 <template name="injection">
-	<div class="new-slave ui form">
+	<form class="new-stock-form ui form">
 		<div class="field">
 			<label>Populate slaves separated by line break</label>
-			<textarea name="newstockarea"></textarea>
+			<textarea name="newstock" rows="2" class="new-stock-input"></textarea>
 		</div>
-	</div>
+		<button type="submit" class="ui inverted purple button">Import</button>
+	</form>
 </template>
 
 <template name="environment">

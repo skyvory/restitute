@@ -1,4 +1,4 @@
-Stocks = new Mongo.Collection("stocks");
+Stocks = new Mongo.Collection("stocks", {idGeneration: "MONGO"});
 
 
 // const listexample = {
@@ -279,7 +279,33 @@ if(Meteor.isServer) {
 			}, function(error, result) {
 				if(error) {
 					mirai.throw(error);
-					console.log("ERROR"< error);
+					console.log("ERROR", error);
+				}
+				if(result) {
+					mirai.return(result);
+				}
+			});
+
+			return mirai.wait();
+		},
+		addStock: function(data) {
+			if(!Meteor.userId()) {
+				throw new Meteor.Error("not-authenticated");
+			}
+
+			Future = Npm.require('fibers/future');
+			var mirai = new Future;
+
+			// data._id = new Mongo.ObjectID();
+			data.user_id = this.userId;
+			console.log(data);
+			stockSchema.clean(data);
+			stockSchema.validate(data);
+
+			Stocks.insert(data, function(error, result) {
+				if(error) {
+					console.log("ERROR", error);
+					mirai.throw(error);
 				}
 				if(result) {
 					mirai.return(result);
@@ -412,13 +438,68 @@ if (Meteor.isClient) {
 	}
 
 	Template.injection.events({
-		"submit .new-slave": function(event) {
+		"submit .new-stock-form": function(event) {
 			event.preventDefault();
-			var val = event.target.text.value;
-			Meteor.call("addSlave", val);
-			event.target.text.value = "";
+			var val = event.target.newstock.value;
+			// Meteor.call("addSlave", val);
+			console.log(val);
+
+			newStockProcess(val);
+			event.target.newstock.value = "";
 		},
 	});
+
+	var processPerLine = function(line) {
+		console.log(line);
+	};
+
+	function newStockProcess(new_stock) {
+		var lines = new_stock.replace(/\r\n/g, "\n").split("\n");
+		var count = lines.length;
+		var i = -1;
+
+		function oo(line) {
+			var data = {
+				name: line,
+			}
+			Meteor.call("addStock", data, function(error, response) {
+				if(error) {
+					console.log(error);
+				}
+				else {
+					console.log("NEXT LINE CALL");
+					setTimeout(function() {
+						nextoo();
+					}, 500);
+				}
+			});
+		}
+
+		function nextoo() {
+			i++;
+			if(i<count && lines[i] != "") {
+				oo(lines[i]);
+			}
+			else {
+				console.log("ITERATION END");
+			}
+		}
+
+		nextoo();
+
+		// use map() method if available
+		// if(typeof lines.map != "undefined") {
+		// 	new_line = lines.map(line_function);
+		// }
+		// else {
+			// new_line = [];
+			// i = lines.length;
+			// for(i = 0; i < lines.length; >> callback loop will do)
+			// 	new_line[i] = line_function(lines[i]);
+			// }
+		// }
+		// new_stock = new_line.join("\r\n");
+	}
 
 	$(window).on('beforeunload', function() {
 		$(window).scrollTop(0);
@@ -436,6 +517,7 @@ if (Meteor.isClient) {
 
 	Template.anal.events({
 		"mousedown .stock-item": function(event) {
+			console.log(target_element);
 			var target_element = $("#"+this._id._str).find(".stock-control");
 			if(target_element.hasClass("visible")) {
 				return;
