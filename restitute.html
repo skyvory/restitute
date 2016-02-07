@@ -80,6 +80,9 @@
 	<div class="stock-area ui relaxed celled selection list">
 		{{#each slaves}}
 			<div class="stock-item item" id="{{_id._str}}">
+				<div class="stock-item-top-progress-bar ui top attached progress" style="display:none;">
+					<div class="bar"></div>
+				</div>
 				<div class="fertility-tag right floated content">
 					<a class="ui mini tag label">{{fertility}}</a>
 				</div>

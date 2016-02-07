@@ -692,6 +692,53 @@ if (Meteor.isClient) {
 			});
 		},
 		"click .anal-plug": function(event) {
+			
+		},
+		"mousedown .anal-plug": function(event) {
+			var target_bar = $("#"+this._id._str).find(".stock-item-top-progress-bar");
+			// remove success class on init, since there's possibility of success class still intact after mouseup before item is deleted
+			target_bar.removeClass("success");
+			var delete_trigger = true;
+			// assign this._id to var to be used inside later success
+			var TEMP_target_stock_id = this._id;
+			target_bar.progress({
+				value: 0,
+				total: 30,
+				onSuccess: function() {
+					// stop repetition so that onSuccess calback won't run endlessly
+					clearInterval(interval);
+					// make sure not more than once the delete method is called
+					if(delete_trigger == true && target_bar.is(":visible") && target_bar.has(".success")) {
+						delete_trigger = false;
+						Meteor.call('deleteStock', TEMP_target_stock_id, function(error, response) {
+							if(error) {
+								console.log(error);
+							}
+							else {
+								showNotification("Slave dumped!", "none");
+							}
+						});
+					}
+				}
+			});
+			var timeout, interval;
+			// intervally increase the progress bar
+			function doInterval() {
+				interval = setInterval(function() {
+					target_bar.progress('increment');
+				}, 100);
+			}
+			// set timeout before progress bar starts to execute
+			timeout = setTimeout(function() {
+				target_bar.show();
+				doInterval();
+			}, 500);
+		},
+		"mouseup .anal-plug": function(event) {
+			var target_bar = $("#"+this._id._str).find(".stock-item-top-progress-bar");
+			// hide progress bar
+			target_bar.hide();
+			// cancelling deletion fallback to original purpose of the close button, that is to close the detail of select item
 			var target_element = $("#"+this._id._str).find(".stock-control");
 			if(target_element.hasClass("visible")) {
 				target_element.transition({
@@ -700,7 +747,7 @@ if (Meteor.isClient) {
 					queue: true,
 				});
 			}
-		}
+		},
 	});
 
 	function showNotification(header_message, content_message) {
