@@ -334,6 +334,32 @@ if(Meteor.isServer) {
 			});
 
 			return mirai.wait();
+		},
+		updateCover: function(stock_id, data) {
+			var stock = Stocks.findOne(stock_id);
+			if(stock.user_id !== Meteor.userId()) {
+				throw new Meteor.Error("not-authorized");
+			}
+
+			Future = Npm.require('fibers/future');
+			var mirai = new Future;
+
+			stockUpdateSchema.clean(data);
+			stockUpdateSchema.validate(data);
+
+			Stocks.update(stock_id, {
+				$set: {
+					cover_image: data.cover_image,
+				}
+			}, function(error, result) {
+				if(error) {
+					mirai.throw(error);
+					console.log("ERROR", error);
+				}
+				if(result) {
+					mirai.return(result);
+				}
+			});
 		}
 	});
 
@@ -806,6 +832,19 @@ if (Meteor.isClient) {
 					showNotification("Sample supposedly refreshed with new images", "none");
 				}
 			})
+		},
+		"click .sample-image": function(event, template) {
+			var data = {
+				cover_image: event.target.src,
+			};
+			Meteor.call('updateCover', template.data._id, data, function(error, response) {
+				if(error) {
+					console.log(error);
+				}
+				else {
+					showNotification("Cover updated!", "");
+				}
+			});
 		},
 	})
 

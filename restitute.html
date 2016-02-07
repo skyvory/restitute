@@ -105,7 +105,12 @@
 						<div class="ui items">
 							<div class="item">
 								<div class="image" style="height:200px; width:250px;">
+								{{#unless cover_image}}
 									<img src="no_image_thumb.gif" style="max-height:100%; max-width:100%; height: auto; width:auto;" class="ui centered image">
+								{{/unless}}
+								{{#if cover_image}}
+									<img src="{{cover_image}}" style="max-height:100%; max-width:100%; height: auto; width:auto;" class="ui centered image">
+								{{/if}}
 								</div>
 								<div class="content">
 
@@ -235,7 +240,7 @@
 	</h4>
 	<div class="ui small images">
 		{{#each images}}
-			<img class="ui fluid image" src="{{this}}" style="max-width:23%;">
+			<img class="sample-image ui fluid image" src="{{this}}" style="max-width:23%;">
 		{{/each}}
 		{{#unless images}}
 			<center>
