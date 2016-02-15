@@ -95,16 +95,22 @@ if(Meteor.isServer) {
 
 	Meteor.methods({
 		getTotalSlavesCunt: function() {
-			return Stocks.find().count();
+			return Stocks.find({ user_id: this.userId }).count();
 		},
 		getDirtySlavesCunt: function() {
 			return Stocks.find({
-				virgin: {$eq: 0},
+				$and: [
+					{ virgin: {$eq: 0} },
+					{ user_id: this.userId },
+				]
 			}).count();
 		},
 		getCleanSlavesCunt: function() {
 			return Stocks.find({
-				virgin: {$eq: 1},
+				$and: [
+					{ virgin: {$eq: 1} },
+					{ user_id: this.userId },
+				]
 			}).count();
 		},
 		updateVirginity: function(stock_id, data) {
