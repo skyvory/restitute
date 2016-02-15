@@ -293,6 +293,15 @@ if(Meteor.isServer) {
 				throw new Meteor.Error("not-authenticated");
 			}
 
+			// make sure no duplicate on entry insertion
+			var existing = Stocks.find({
+				name: data.name,
+			}).count();
+			if(existing) {
+				console.log("EXISTING", existing, data.name);
+				return;
+			}
+
 			Future = Npm.require('fibers/future');
 			var mirai = new Future;
 
