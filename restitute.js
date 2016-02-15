@@ -369,6 +369,8 @@ if(Meteor.isServer) {
 					mirai.return(result);
 				}
 			});
+
+			return mirai.wait();
 		},
 		getBingWallpaper: function() {
 			Future = Npm.require('fibers/future');
