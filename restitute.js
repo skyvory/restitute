@@ -369,7 +369,25 @@ if(Meteor.isServer) {
 					mirai.return(result);
 				}
 			});
-		}
+		},
+		getBingWallpaper: function() {
+			Future = Npm.require('fibers/future');
+			var mirai = new Future;
+
+			this.unblock();
+
+			HTTP.call('GET', "http://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1&mkt=en-US", { timeout: 30 * 1000 }, function(error, result) {
+				if(error) {
+					console.log("ERROR", error);
+					mirai.throw(error);
+				}
+				if(result) {
+					mirai.return(result);
+				}
+			});
+
+			return mirai.wait();
+		},
 	});
 
 	Meteor.startup(function () {
@@ -630,6 +648,18 @@ if (Meteor.isClient) {
 	Meteor.startup(function () {
 		// code to run on client at startup
 		$(window).scroll(loadMore);
+
+		// get bing wallpaper
+		Meteor.call('getBingWallpaper', function(error, response) {
+			if(error) {
+				console.log(error);
+			}
+			else {
+				var url_base = "https://www.bing.com/";
+				var url_resource = response.data.images[0].url;
+				document.body.style.backgroundImage = "url(" + url_base + url_resource + ")";
+			}
+		});
 	});
 
 
