@@ -3,3 +3,9 @@ body {
 	background-size: cover;
 	background-attachment: fixed;
 }
+
+#login-dropdown-list {
+	position: fixed;
+	left: 43%;
+	top: 40%;
+}
