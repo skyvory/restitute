@@ -82,7 +82,7 @@ if(Meteor.isServer) {
 		}
 		else {
 			return Stocks.find({
-				$or: [
+				$and: [
 					{ virgin: {$ne: 1} },
 					{ user_id: this.userId },
 				]
