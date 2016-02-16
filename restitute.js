@@ -83,7 +83,7 @@ if(Meteor.isServer) {
 		else {
 			return Stocks.find({
 				$and: [
-					{ virgin: {$ne: 1} },
+					{ virgin: {$eq: 1} },
 					{ user_id: this.userId },
 				]
 			}, {
@@ -100,7 +100,7 @@ if(Meteor.isServer) {
 		getUnreadStocksCount: function() {
 			return Stocks.find({
 				$and: [
-					{ virgin: {$eq: 0} },
+					{ virgin: {$eq: 1} },
 					{ user_id: this.userId },
 				]
 			}).count();
@@ -108,7 +108,7 @@ if(Meteor.isServer) {
 		getReadStockCount: function() {
 			return Stocks.find({
 				$and: [
-					{ virgin: {$eq: 1} },
+					{ virgin: {$ne: 1} },
 					{ user_id: this.userId },
 				]
 			}).count();
@@ -483,21 +483,21 @@ if (Meteor.isClient) {
 			});
 			return Session.get("total_stocks_count");
 		},
-		dirty: function() {
-			Session.setDefault("dirty_slaves_cunt", 0);
+		unread: function() {
+			Session.setDefault("unread_stocks_count", 0);
 			Meteor.call('getUnreadStocksCount', function(error, response) {
 				// console.log("ERROR", error, "RESPONSE", response);
-				Session.set("dirty_slaves_cunt", response);
+				Session.set("unread_stocks_count", response);
 			});
-			return Session.get("dirty_slaves_cunt");
+			return Session.get("unread_stocks_count");
 		},
-		clean: function() {
-			Session.setDefault("clean_slaves_cunt", 0);
+		read: function() {
+			Session.setDefault("read_stocks_count", 0);
 			Meteor.call('getReadStockCount', function(error, response) {
 				// console.log("ERROR", error, "RESPONSE", response);
-				Session.set("clean_slaves_cunt", response);
+				Session.set("read_stocks_count", response);
 			});
-			return Session.get("clean_slaves_cunt");
+			return Session.get("read_stocks_count");
 		},
 	});
 
