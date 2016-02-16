@@ -94,10 +94,10 @@ if(Meteor.isServer) {
 	});
 
 	Meteor.methods({
-		getTotalSlavesCunt: function() {
+		getTotalStocksCount: function() {
 			return Stocks.find({ user_id: this.userId }).count();
 		},
-		getDirtySlavesCunt: function() {
+		getUnreadStocksCount: function() {
 			return Stocks.find({
 				$and: [
 					{ virgin: {$eq: 0} },
@@ -105,7 +105,7 @@ if(Meteor.isServer) {
 				]
 			}).count();
 		},
-		getCleanSlavesCunt: function() {
+		getReadStockCount: function() {
 			return Stocks.find({
 				$and: [
 					{ virgin: {$eq: 1} },
@@ -415,10 +415,10 @@ if (Meteor.isClient) {
 	// Meteor.subscribe('stocks');
 
 	var slaves_expansion = 20;
-	Session.setDefault('slaves_limit', slaves_expansion);
-	Session.setDefault("slaves_selection", "");
+	Session.setDefault('stocks_limit', slaves_expansion);
+	Session.setDefault("stocks_selection", "");
 	Tracker.autorun(function() {
-		Meteor.subscribe('stocks', Session.get('slaves_limit'), Session.get('slaves_selection'));
+		Meteor.subscribe('stocks', Session.get('stocks_limit'), Session.get('stocks_selection'));
 	});
 
 	Template.body.helpers({
@@ -427,9 +427,9 @@ if (Meteor.isClient) {
 	Template.body.events({
 		"change .stock-search-input": function(event) {
 			// reset limit to default when search query changes
-			Session.set("slaves_limit", slaves_expansion);
+			Session.set("stocks_limit", slaves_expansion);
 			// apply value of search query into session, of which tracker automatically fetch search results
-			Session.set("slaves_selection", event.target.value);
+			Session.set("stocks_selection", event.target.value);
 		},
 		"click .new-stock-close-label": function(event) {
 			$(".new-stock-button").transition({
@@ -450,12 +450,12 @@ if (Meteor.isClient) {
 		},
 	});
 
-	Template.anal.helpers({
-		slaves: function() {
+	Template.slave.helpers({
+		stocks: function() {
 			return Stocks.find();
 		},
 		moreResults: function() {
-			return !(Stocks.find().count() < Session.get("slaves_limit"));
+			return !(Stocks.find().count() < Session.get("stocks_limit"));
 		},
 		virginity_check: function() {
 			if(this.virgin == 1) {
@@ -471,21 +471,21 @@ if (Meteor.isClient) {
 	// setInterval(function() {
 		
 	// }, 1000 * 1);
-	Template.climax.helpers({
+	Template.status.helpers({
 		current: function() {
 			return Stocks.find().count();
 		},
 		total: function() {
-			Session.setDefault("total_slaves_cunt", 0);
-			Meteor.call('getTotalSlavesCunt', function(error, response) {
+			Session.setDefault("total_stocks_count", 0);
+			Meteor.call('getTotalStocksCount', function(error, response) {
 				// console.log("ERROR", error, "RESPONSE", response);
-				Session.set("total_slaves_cunt", response);
+				Session.set("total_stocks_count", response);
 			});
-			return Session.get("total_slaves_cunt");
+			return Session.get("total_stocks_count");
 		},
 		dirty: function() {
 			Session.setDefault("dirty_slaves_cunt", 0);
-			Meteor.call('getDirtySlavesCunt', function(error, response) {
+			Meteor.call('getUnreadStocksCount', function(error, response) {
 				// console.log("ERROR", error, "RESPONSE", response);
 				Session.set("dirty_slaves_cunt", response);
 			});
@@ -493,7 +493,7 @@ if (Meteor.isClient) {
 		},
 		clean: function() {
 			Session.setDefault("clean_slaves_cunt", 0);
-			Meteor.call('getCleanSlavesCunt', function(error, response) {
+			Meteor.call('getReadStockCount', function(error, response) {
 				// console.log("ERROR", error, "RESPONSE", response);
 				Session.set("clean_slaves_cunt", response);
 			});
@@ -523,7 +523,7 @@ if (Meteor.isClient) {
 
 		// if(target.offset().top < threshold) {
 		// 	console.log("TRIGGER LOAD");
-		// 	Session.set("slaves_limit", Session.get("slaves_limit") + slaves_expansion);
+		// 	Session.set("stocks_limit", Session.get("stocks_limit") + slaves_expansion);
 		// }
 		// else {
 		// 	if(target.data("visible")) {
@@ -532,7 +532,7 @@ if (Meteor.isClient) {
 		// }
 
 		if($(window).scrollTop() == $(document).height() - $(window).height()) {
-			Session.set("slaves_limit", Session.get("slaves_limit") + slaves_expansion);
+			Session.set("stocks_limit", Session.get("stocks_limit") + slaves_expansion);
 		}
 	}
 
@@ -671,11 +671,11 @@ if (Meteor.isClient) {
 	});
 
 
-	// Template.anal.onRendered(function() {
+	// Template.slave.onRendered(function() {
 	// 	this.$(".fertility-dropdown").dropdown();
 	// });
 
-	Template.anal.events({
+	Template.slave.events({
 		"mousedown .stock-item": function(event) {
 			console.log(target_element);
 			var target_element = $("#"+this._id._str).find(".stock-control");
@@ -764,16 +764,12 @@ if (Meteor.isClient) {
 				}
 			});
 		},
-		"click .anal-plug": function(event) {
-			
-		},
-		"mousedown .anal-plug": function(event) {
+		"mousedown .stock-close-button": function(event) {
 			var target_bar = $("#"+this._id._str).find(".stock-item-top-progress-bar");
-			// remove success class on init, since there's possibility of success class still intact after mouseup before item is deleted
-			target_bar.removeClass("success");
 			var delete_trigger = true;
 			// assign this._id to var to be used inside later success
 			var TEMP_target_stock_id = this._id;
+
 			target_bar.progress({
 				value: 0,
 				total: 30,
@@ -781,7 +777,8 @@ if (Meteor.isClient) {
 					// stop repetition so that onSuccess calback won't run endlessly
 					clearInterval(interval);
 					// make sure not more than once the delete method is called
-					if(delete_trigger == true && target_bar.is(":visible") && target_bar.has(".success")) {
+					if(delete_trigger == true && target_bar.is(":visible")) {
+						console.log("delete call");
 						delete_trigger = false;
 						Meteor.call('deleteStock', TEMP_target_stock_id, function(error, response) {
 							if(error) {
@@ -799,18 +796,29 @@ if (Meteor.isClient) {
 			function doInterval() {
 				interval = setInterval(function() {
 					target_bar.progress('increment');
+					if(stockcontrol.hasClass("visible") != true) {
+						target_bar.hide();
+						clearInterval(interval);
+					}
 				}, 100);
 			}
+
+			var stockcontrol = $('#' + this._id._str).find(".stock-control");
 			// set timeout before progress bar starts to execute
 			timeout = setTimeout(function() {
-				target_bar.show();
-				doInterval();
+				if(stockcontrol.hasClass("visible")) {
+					target_bar.show();
+					doInterval();
+				}
 			}, 500);
 		},
-		"mouseup .anal-plug": function(event) {
+		"mouseup .stock-close-button": function(event) {
 			var target_bar = $("#"+this._id._str).find(".stock-item-top-progress-bar");
+			// reset progress bar as delete call is canceled
+			target_bar.progress('reset');
 			// hide progress bar
 			target_bar.hide();
+			target_bar.css("display", "none");
 			// cancelling deletion fallback to original purpose of the close button, that is to close the detail of select item
 			var target_element = $("#"+this._id._str).find(".stock-control");
 			if(target_element.hasClass("visible")) {

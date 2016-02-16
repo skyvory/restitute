@@ -51,7 +51,7 @@
 			<div class="row">
 				<div class="ui segment">
 					<a class="ui blue left ribbon label">Stocks</a>
-					{{> anal}}
+					{{> slave}}
 				</div>
 			</div>
 		</div>
@@ -59,7 +59,7 @@
 		<div class="three wide column">
 			<div class="ui raised segment" style="position:fixed; min-width:150px;">
 				<a class="ui teal right ribbon label">Stats</a>
-				{{> climax}}
+				{{> status}}
 			</div>
 
 			{{> environment}}
@@ -76,9 +76,9 @@
 	<span class="master-user">{{currentUser.username}}</span>
 </template>
 
-<template name="anal">
+<template name="slave">
 	<div class="stock-area ui relaxed celled selection list">
-		{{#each slaves}}
+		{{#each stocks}}
 			<div class="stock-item item" id="{{_id._str}}">
 				<div class="stock-item-top-progress-bar ui top attached progress" style="display:none;">
 					<div class="bar"></div>
@@ -97,7 +97,7 @@
 					</div>
 					<div class="stock-control ui form" style="display:none;">
 
-						<div class="anal-plug floating ui red mini label">
+						<div class="stock-close-button floating ui red mini label">
 							close
 							<i class="delete icon"></i>
 						</div>
@@ -173,7 +173,7 @@
 	</div>
 </template>
 
-<template name="climax">
+<template name="status">
 	<p>Total: {{total}}</p>
 	<p>Read: {{dirty}}</p>
 	<p>Unread: {{clean}}</p>
@@ -184,7 +184,7 @@
 	<button class="new-stock-button ui mini inverted teal button">New stock</button>
 	<form class="new-stock-form ui form" style="display:none;">
 		<div class="field">
-			<label>Populate slaves separated by line break</label>
+			<label>Populate stocks separated by line break</label>
 			<textarea name="newstock" rows="2" class="new-stock-textarea"></textarea>
 		</div>
 		<button type="submit" class="new-stock-submit-button ui mini inverted purple button">Import</button>
