@@ -452,7 +452,7 @@ if (Meteor.isClient) {
 
 	Template.slave.helpers({
 		stocks: function() {
-			return Stocks.find();
+			return Stocks.find({}, {sort: { created_at: -1 } });
 		},
 		moreResults: function() {
 			return !(Stocks.find().count() < Session.get("stocks_limit"));
