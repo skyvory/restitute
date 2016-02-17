@@ -317,6 +317,9 @@ if(Meteor.isServer) {
 			stockSchema.clean(data);
 			stockSchema.validate(data);
 
+			data.created_at = new Date();
+			data.updated_at = new Date();
+
 			Stocks.insert(data, function(error, result) {
 				if(error) {
 					console.log("ERROR", error);
