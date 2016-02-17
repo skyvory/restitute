@@ -588,8 +588,8 @@ if (Meteor.isClient) {
 			total: count,
 			label: 'percent',
 			text: {
-				active: "Training {value} of {total} slaves",
-				success: "Successfully imported {total} new slaves!",
+				active: "Injecting {value} of {total} entries",
+				success: "Successfully imported {total} new stocks!",
 			}
 		});
 
