@@ -4,7 +4,7 @@ Layman's term: Rough file and directory backlog management.
 Built specifically for VN backlogger in mind.
 
 # Demo
-Live demo available at skyvory.meteor.com  
+Live demo available at [skyvory.meteor.com] (https://skyvory.meteor.com)  
 Occasional error on meteor side is to be expected as of poor availability.
 
 # Installation
